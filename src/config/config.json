@@ -1,0 +1,6 @@
+{
+    "date-format": "dd.MM.yyyy",
+    "apiURL": "http://localhost:3000",
+    "appLanguages": ["en", "de"],
+    "appLanguageDefault": "en"
+}

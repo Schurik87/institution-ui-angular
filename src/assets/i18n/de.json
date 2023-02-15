@@ -1,0 +1,34 @@
+{
+    "menu": {
+        "home": "Home",
+        "dashboard": "Dashboard",
+        "data-managemet-group": "DATA MANAGEMENT",
+        "overview": "Übersicht",
+        "users": "Benutzer",
+        "clients": "Clienten",
+        "employees": "Mitarbeiter"
+    },
+    "button": {
+        "new": "Neu",
+        "delete": "Löschen",
+        "add": "Hinzufügen",
+        "cancel": "Abbrechen",
+        "import": "Import",
+        "export": "Export"
+    },
+    "user": {
+        "user-name": "Benutzer",
+        "email": "Email",
+        "first-name": "Vorname",
+        "last-name": "Nachname",
+        "gender": "Geschlecht",
+        "image": "Image",
+        "date-of-birth": "Date of birth",
+        "appLanguage": "App Sprache",
+        "genders": {
+            "male": "Male",
+            "female": "Female",
+            "other": "Other"
+        }
+    }
+}

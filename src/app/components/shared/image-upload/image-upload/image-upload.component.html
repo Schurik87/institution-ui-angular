@@ -1,0 +1,38 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="user-image-wrapper">
+            <img
+                #imageSelector
+                [src]="imageBase64 || 'assets/images/user/default_user.png'"
+                alt="Image"
+                class="user-image"
+            />
+            <div class="image-buttons">
+            <button
+             *ngIf="!imageBase64"
+                pButton
+                pRipple
+                type="button"
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button-secondary"
+                (click)="fileInput.click()"
+            >
+                <input
+                    #fileInput
+                    type="file"
+                    (change)="onFileSelect($event)"
+                    style="display: none"
+                />
+            </button>
+            <button
+                *ngIf="imageBase64"
+                pButton
+                pRipple
+                icon="pi pi-times"
+                class="p-button-rounded p-button-secondary"
+                (click)="cancelSelection()"
+            ></button>
+        </div>
+        </div>
+    </div>
+</div>
