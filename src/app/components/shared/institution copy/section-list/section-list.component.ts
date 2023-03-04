@@ -15,25 +15,24 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { MessageService, PrimeNGConfig } from 'primeng/api';
-import { User } from 'src/app/api/user';
-import { UserService } from 'src/app/service/user.service';
+import { Section } from 'src/app/api/section';
+import { SectionService } from 'src/app/service/section.service';
 import { AvatarModule } from 'primeng/avatar';
 import { Select, Store } from '@ngxs/store';
 import {
-    DeleteUser,
-    GetUsers,
-    UpdateSelectedUser,
-    UpdateUser,
-} from 'src/app/store/actions/user.action';
+    DeleteSection,
+    GetSections,
+    UpdateSection,
+} from 'src/app/store/actions/section.action';
 import { Observable, Subscription } from 'rxjs';
-import { UserState } from 'src/app/store/states/user.state';
+import { SectionState } from 'src/app/store/states/section.state';
 import { CalendarModule } from 'primeng/calendar';
 import config from '../../../../../config/config.json';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
-    selector: 'app-user-list',
+    selector: 'app-section-list',
     standalone: true,
     imports: [
         CommonModule,
@@ -56,21 +55,20 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         RouterModule,
         TranslateModule,
     ],
-    providers: [UserService],
-    templateUrl: './user-list.component.html',
-    styleUrls: ['./user-list.component.scss'],
+    providers: [SectionService],
+    templateUrl: './section-list.component.html',
+    styleUrls: ['./section-list.component.scss'],
 })
-export class UserListComponent implements OnInit {
-    userDialog: boolean = false;
-    deleteUserDialog: boolean = false;
-    deleteUsersDialog: boolean = false;
-    user: User = {};
-    users: User[] = [];
-    selectedUsers: User[] = [];
+export class SectionListComponent implements OnInit {
+    sectionDialog: boolean = false;
+    deleteSectionDialog: boolean = false;
+    deleteSectionsDialog: boolean = false;
+    section: Section = { name: '', institutionId: '' };
+    sections: Section[] = [];
+    selectedSections: Section[] = [];
     submitted: boolean = false;
     cols: any[] = [];
     rowsPerPageOptions = [10, 20, 50];
-    dateFormat = config['date-format'] || 'DD.MM.YYYY';
     subscription: Subscription;
     constructor(
         private messageService: MessageService,
@@ -80,127 +78,126 @@ export class UserListComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.store.dispatch(new GetUsers());
-        this.store.select(UserState.getUsers).subscribe((users) => {
-            this.users = [...users];
+        console.log('### dispatch GetSections');
+        this.store.dispatch(new GetSections());
+        this.store.select(SectionState.getSections).subscribe((sections) => {
+            if (sections && sections.length > 0) {
+                this.sections = [...sections];
+            } else {
+                this.sections = [];
+            }
         });
 
         this.cols = [
-            { field: 'userName', header: 'User' },
-            { field: 'email', header: 'Email' },
-            { field: 'firstName', header: 'First-Name' },
-            { field: 'lastName', header: 'Last-Name' },
-            { field: 'gender', header: 'Gender' },
-            { field: 'dateOfBirth', header: 'Date of birth' },
+            { field: 'name', header: 'Name' },
+            { field: 'image', header: 'Image' },
         ];
     }
 
     openNew() {
-        this.user = {};
-        this.router.navigate(['/users/new']);
+        this.section = { name: '', institutionId: '' };
+        this.router.navigate(['/sections/new']);
     }
 
-    deleteSelectedUsers() {
-        this.deleteUsersDialog = true;
+    deleteSelectedSections() {
+        this.deleteSectionsDialog = true;
     }
 
-    editUser(user: User) {
-        this.user = { ...user };
-        this.store.dispatch(new UpdateSelectedUser(user));
-        // this.userDialog = true;
-        this.router.navigate(['/users', user.id]);
+    editSection(section: Section) {
+        this.section = { ...section };
+        this.router.navigate(['/sections', section.id]);
     }
 
-    deleteUser(user: User) {
-        this.deleteUserDialog = true;
-        this.user = { ...user };
+    deleteSection(section: Section) {
+        this.deleteSectionDialog = true;
+        this.section = { ...section };
     }
 
     confirmDeleteSelected() {
-        this.deleteUsersDialog = false;
+        this.deleteSectionsDialog = false;
         this.messageService.add({
             severity: 'success',
             summary: 'Successful',
-            detail: 'Users Deleted',
+            detail: 'Sections Deleted',
             life: 3000,
         });
-        this.selectedUsers = [];
+        this.selectedSections = [];
     }
 
     confirmDelete() {
-        this.deleteUserDialog = false;
-        if (this.user.id) {
-            this.store.dispatch(new DeleteUser(this.user.id));
+        this.deleteSectionDialog = false;
+        if (this.section.id) {
+            this.store.dispatch(new DeleteSection(this.section.id));
             this.messageService.add({
                 severity: 'success',
                 summary: 'Successful',
-                detail: 'User Deleted',
+                detail: 'Section Deleted',
                 life: 3000,
             });
-            this.user = {};
+            this.section = { name: '', institutionId: '' };
         }
     }
 
     hideDialog() {
-        this.userDialog = false;
+        this.sectionDialog = false;
         this.submitted = false;
     }
 
-    saveUser() {
+    saveSection() {
         this.submitted = true;
-        if (this.user) {
+        if (this.section) {
             this.store
-                .dispatch(new UpdateUser(this.user))
-                .subscribe((userUpdated) => {
+                .dispatch(new UpdateSection(this.section))
+                .subscribe((sectionUpdated) => {
                     this.messageService.add({
                         severity: 'success',
                         summary: 'Successful',
-                        detail: `User '${userUpdated.userName}' Updated`,
+                        detail: `Section '${sectionUpdated.sectionName}' Updated`,
                         life: 3000,
                     });
-                    this.userDialog = false;
+                    this.sectionDialog = false;
                 });
         }
-        // if (this.user.userName?.trim()) {
-        //     if (this.user.id) {
-        //         this.users[this.findIndexById(this.user.id)] = this.user;
-        //         this.userService
-        //             .updateUser(this.user)
-        //             .subscribe((updatedUser) => {
-        //                 if (updatedUser) {
-        //                     this.user = updatedUser;
-        //                     this.users[this.findIndexById(this.user.id || '')] =
-        //                         this.user;
+        // if (this.section.sectionName?.trim()) {
+        //     if (this.section.id) {
+        //         this.sections[this.findIndexById(this.section.id)] = this.section;
+        //         this.sectionService
+        //             .updateSection(this.section)
+        //             .subscribe((updatedSection) => {
+        //                 if (updatedSection) {
+        //                     this.section = updatedSection;
+        //                     this.sections[this.findIndexById(this.section.id || '')] =
+        //                         this.section;
         //                     this.messageService.add({
         //                         severity: 'success',
         //                         summary: 'Successful',
-        //                         detail: 'User Updated',
+        //                         detail: 'Section Updated',
         //                         life: 3000,
         //                     });
         //                 }
         //             });
         //     } else {
-        //         this.user.id = this.createId();
-        //         this.user.image = 'user-placeholder.svg';
-        //         this.users.push(this.user);
+        //         this.section.id = this.createId();
+        //         this.section.image = 'section-placeholder.svg';
+        //         this.sections.push(this.section);
         //         this.messageService.add({
         //             severity: 'success',
         //             summary: 'Successful',
-        //             detail: 'User Created',
+        //             detail: 'Section Created',
         //             life: 3000,
         //         });
         //     }
 
-        //     this.users = [...this.users];
-        //     this.userDialog = false;
-        //     this.user = {};
+        //     this.sections = [...this.sections];
+        //     this.sectionDialog = false;
+        //     this.section = {};
         // }
     }
 
     findIndexById(id: string): number {
         let index = -1;
-        // for (let i = 0; i < this.users.length; i++) {
-        //     if (this.users[i].id === id) {
+        // for (let i = 0; i < this.sections.length; i++) {
+        //     if (this.sections[i].id === id) {
         //         index = i;
         //         break;
         //     }

@@ -1,4 +1,12 @@
 {
+    "general": {
+        "institution": "Institution",
+        "institutions": "Institutions",
+        "section": "Section",
+        "sections": "Sections",
+        "user": "User",
+        "users": "Users"
+    },
     "button": {
         "new": "New",
         "delete": "Delete",
@@ -14,7 +22,9 @@
         "overview": "Overview",
         "users": "Users",
         "clients": "Clients",
-        "employees": "Employees"
+        "employees": "Employees",
+        "institutions": "Institutions",
+        "sections": "Sections"
     },
     "user": {
         "user-management": "User management",
@@ -22,7 +32,7 @@
         "email": "Email",
         "first-name": "First name",
         "last-name": "Last name",
-        "gender": "gender",
+        "gender": "Gender",
         "image": "Image",
         "date-of-birth": "Date of birth",
         "appLanguage": "App language",
@@ -31,5 +41,13 @@
             "female": "Female",
             "other": "Other"
         }
+    },
+    "institution": {
+        "name": "Name",
+        "image": "Image"
+    },
+    "section": {
+        "name": "Name",
+        "image": "Image"
     }
 }

@@ -35,6 +35,21 @@ export class AppMenuComponent implements OnInit {
                         icon: 'pi pi-fw pi-home',
                         routerLink: ['/users'],
                     },
+                    {
+                        label: this.translate.instant('menu.sections'),
+                        icon: 'pi pi-fw pi-home',
+                        routerLink: ['/sections'],
+                    },
+                ],
+            },
+            {
+                label: this.translate.instant('menu.institutions'),
+                items: [
+                    {
+                        label: this.translate.instant('menu.institutions'),
+                        icon: 'pi pi-fw pi-home',
+                        routerLink: ['/institutions'],
+                    },
                 ],
             },
             {

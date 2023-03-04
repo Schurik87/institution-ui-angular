@@ -6,7 +6,7 @@ import { ProductService } from 'src/app/service/product.service';
 
 @Component({
     templateUrl: './crud.component.html',
-    providers: [MessageService],
+    providers: [],
 })
 export class CrudComponent implements OnInit {
     productDialog: boolean = false;

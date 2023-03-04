@@ -12,19 +12,17 @@ import { DropdownModule } from 'primeng/dropdown';
 import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { MessageService } from 'primeng/api';
-import { User } from 'src/app/api/user';
+import { Institution } from 'src/app/api/institution';
 import { CalendarModule } from 'primeng/calendar';
 import { map, Observable, Subject, takeUntil } from 'rxjs';
-import { UserState } from 'src/app/store/states/user.state';
+import { InstitutionState } from 'src/app/store/states/institution.state';
 import { Store } from '@ngxs/store';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import {
-    AddUser,
-    GetCurrentUser,
-    GetUser,
-    GetUsers,
-    UpdateUser,
-} from 'src/app/store/actions/user.action';
+    AddInstitution,
+    GetInstitutions,
+    UpdateInstitution,
+} from 'src/app/store/actions/institution.action';
 import { CardModule } from 'primeng/card';
 import { ImageModule } from 'primeng/image';
 import { LanguageService } from 'src/app/service/language.service';
@@ -33,7 +31,7 @@ import { Language } from 'src/app/api/country';
 import { ImageUploadComponent } from '../../image-upload/image-upload/image-upload.component';
 
 @Component({
-    selector: 'app-user-detail',
+    selector: 'app-institution-detail',
     standalone: true,
     imports: [
         CommonModule,
@@ -56,16 +54,16 @@ import { ImageUploadComponent } from '../../image-upload/image-upload/image-uplo
         FileUploadModule,
         ImageUploadComponent,
     ],
-    templateUrl: './user-detail.component.html',
-    styleUrls: ['./user-detail.component.scss'],
+    templateUrl: './institution-detail.component.html',
+    styleUrls: ['./institution-detail.component.scss'],
 })
-export class UserDetailComponent implements OnInit {
+export class InstitutionDetailComponent implements OnInit {
     private readonly destroy$ = new Subject();
-    userId: string = '';
+    institutionId: string = '';
     submitted: boolean = false;
-    user: User;
-    currentUser?: User;
-    user$: Observable<User | undefined>;
+    institution: Institution;
+    currentInstitution?: Institution;
+    institution$: Observable<Institution | undefined>;
 
     appLanguages: Language[] = [];
     appLanguageSelcted?: Language;
@@ -87,103 +85,66 @@ export class UserDetailComponent implements OnInit {
         ];
 
         // check if storage is filled
-        if (!this.store.selectSnapshot(UserState.countUsers)) {
-            this.store.dispatch(new GetUsers());
+        if (!this.store.selectSnapshot(InstitutionState.countInstitutions)) {
+            this.store.dispatch(new GetInstitutions());
         }
-
-        this.store.select(UserState.getCurrentUser).subscribe((currentUser) => {
-            this.currentUser = currentUser;
-        });
 
         const paramId = this.route.snapshot.paramMap.get('id');
         if (paramId) {
-            this.store.dispatch(new GetUser(paramId));
             this.store
-                .select(UserState.getUser)
+                .select(InstitutionState.getInstitution)
                 .pipe(
                     takeUntil(this.destroy$),
                     map((filterFn) => filterFn(paramId))
                 )
-                .subscribe((user) => {
-                    if (user) {
-                        this.user = { ...user };
-                        this.dateOfBirth = new Date(
-                            this.user.dateOfBirth || ''
-                        );
-                        if (this.user.appLanguage) {
-                            this.appLanguageSelcted = this.appLanguages.find(
-                                (language) =>
-                                    language.langCode === this.user?.appLanguage
-                            );
-                        }
+                .subscribe((institution) => {
+                    if (institution) {
+                        this.institution = { ...institution };
                     } else {
-                        // lets create a new user
-                        this.user = {};
+                        // lets create a new institution
+                        this.institution = { name: '' };
                     }
                 });
         } else {
-            // if no selected user defined in store, redirect to user list
-            this.router.navigate(['/users']);
+            // if no selected institution defined in store, redirect to institution list
+            this.router.navigate(['/institutions']);
         }
     }
 
     cancel() {
         this.submitted = false;
-        this.router.navigate(['/users']);
+        this.router.navigate(['/institutions']);
     }
-    saveUser() {
+    saveInstitution() {
         this.submitted = true;
-        if (this.user) {
-            if (this.appLanguageSelcted) {
-                this.user.appLanguage = this.appLanguageSelcted.langCode;
-            }
-            if (this.dateOfBirth) {
-                this.user.dateOfBirth = this.dateOfBirth;
-            }
-            if (this.user.id) {
+        console.log('##### this.institution', this.institution);
+        if (this.institution) {
+            if (this.institution.id) {
                 this.store
-                    .dispatch(new UpdateUser(this.user))
+                    .dispatch(new UpdateInstitution(this.institution))
                     .pipe(takeUntil(this.destroy$))
-                    .subscribe((userUpdated) => {
-                        if (userUpdated) {
-                            this.router.navigate(['/users']);
-                            if (
-                                this.user?.appLanguage &&
-                                this.user.id === this.currentUser?.id
-                            ) {
-                                this.store.dispatch(new GetCurrentUser());
-                                this.languageService.changeLang(
-                                    this.user.appLanguage.toLowerCase()
-                                );
-                            }
+                    .subscribe((institutionUpdated) => {
+                        if (institutionUpdated) {
                             this.messageService.add({
                                 severity: 'success',
                                 summary: 'Successful',
-                                detail: `User '${this.user.userName}' updated`,
+                                detail: `Institution '${this.institution.name}' updated`,
                                 life: 3000,
                             });
+                            this.router.navigate(['/institutions']);
                         }
                     });
             } else {
                 this.store
-                    .dispatch(new AddUser(this.user))
+                    .dispatch(new AddInstitution(this.institution))
                     .pipe(takeUntil(this.destroy$))
-                    .subscribe((createdUser) => {
-                        if (createdUser) {
-                            this.router.navigate(['/users']);
-                            if (
-                                this.user?.appLanguage &&
-                                this.user.id === this.currentUser?.id
-                            ) {
-                                this.store.dispatch(new GetCurrentUser());
-                                this.languageService.changeLang(
-                                    this.user.appLanguage.toLowerCase()
-                                );
-                            }
+                    .subscribe((createdInstitution) => {
+                        if (createdInstitution) {
+                            this.router.navigate(['/institutions']);
                             this.messageService.add({
                                 severity: 'success',
                                 summary: 'Successful',
-                                detail: `User '${this.user.userName}' created`,
+                                detail: `Institution '${this.institution.name}' created`,
                                 life: 3000,
                             });
                         }
@@ -192,7 +153,7 @@ export class UserDetailComponent implements OnInit {
         }
     }
 
-    userImageChanged(event: string) {
-        this.user.image = event;
+    institutionImageChanged(event: string) {
+        this.institution.image = event;
     }
 }

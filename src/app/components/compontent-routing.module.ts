@@ -26,6 +26,34 @@ import { RouterModule } from '@angular/router';
                     ).then((m) => m.UserDetailComponent),
             },
             {
+                path: 'institutions',
+                loadComponent: () =>
+                    import(
+                        './shared/institution/institution-list/institution-list.component'
+                    ).then((m) => m.InstitutionListComponent),
+            },
+            {
+                path: 'institutions/:id',
+                loadComponent: () =>
+                    import(
+                        './shared/institution/institution-detail/institution-detail.component'
+                    ).then((m) => m.InstitutionDetailComponent),
+            },
+            {
+                path: 'sections',
+                loadComponent: () =>
+                    import(
+                        './shared/institution copy/section-list/section-list.component'
+                    ).then((m) => m.SectionListComponent),
+            },
+            {
+                path: 'sections/:id',
+                loadComponent: () =>
+                    import(
+                        './shared/institution copy/section-detail/section-detail.component'
+                    ).then((m) => m.SectionDetailComponent),
+            },
+            {
                 path: 'uikit',
                 loadChildren: () =>
                     import('./uikit/uikit.module').then((m) => m.UIkitModule),

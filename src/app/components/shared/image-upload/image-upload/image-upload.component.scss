@@ -2,18 +2,20 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
 
     .image-buttons {
-        position: relative;
-        top: 50px;
-        right: 50px;
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
     }
 
     .user-image {
-        border-radius: 50%;
+        border-radius: 15%;
         border: 0.1rem solid lightgray;
         width: 250px;
         height: 250px;
         object-fit: cover;
+        margin-top: 20px;
     }
 }

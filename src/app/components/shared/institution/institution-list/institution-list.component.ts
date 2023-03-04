@@ -15,25 +15,24 @@ import { RadioButtonModule } from 'primeng/radiobutton';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { DialogModule } from 'primeng/dialog';
 import { MessageService, PrimeNGConfig } from 'primeng/api';
-import { User } from 'src/app/api/user';
-import { UserService } from 'src/app/service/user.service';
+import { Institution } from 'src/app/api/institution';
+import { InstitutionService } from 'src/app/service/institution.service';
 import { AvatarModule } from 'primeng/avatar';
 import { Select, Store } from '@ngxs/store';
 import {
-    DeleteUser,
-    GetUsers,
-    UpdateSelectedUser,
-    UpdateUser,
-} from 'src/app/store/actions/user.action';
+    DeleteInstitution,
+    GetInstitutions,
+    UpdateInstitution,
+} from 'src/app/store/actions/institution.action';
 import { Observable, Subscription } from 'rxjs';
-import { UserState } from 'src/app/store/states/user.state';
+import { InstitutionState } from 'src/app/store/states/institution.state';
 import { CalendarModule } from 'primeng/calendar';
 import config from '../../../../../config/config.json';
 import { Router, RouterModule } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 @Component({
-    selector: 'app-user-list',
+    selector: 'app-institution-list',
     standalone: true,
     imports: [
         CommonModule,
@@ -56,21 +55,20 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
         RouterModule,
         TranslateModule,
     ],
-    providers: [UserService],
-    templateUrl: './user-list.component.html',
-    styleUrls: ['./user-list.component.scss'],
+    providers: [InstitutionService],
+    templateUrl: './institution-list.component.html',
+    styleUrls: ['./institution-list.component.scss'],
 })
-export class UserListComponent implements OnInit {
-    userDialog: boolean = false;
-    deleteUserDialog: boolean = false;
-    deleteUsersDialog: boolean = false;
-    user: User = {};
-    users: User[] = [];
-    selectedUsers: User[] = [];
+export class InstitutionListComponent implements OnInit {
+    institutionDialog: boolean = false;
+    deleteInstitutionDialog: boolean = false;
+    deleteInstitutionsDialog: boolean = false;
+    institution: Institution = { name: '' };
+    institutions: Institution[] = [];
+    selectedInstitutions: Institution[] = [];
     submitted: boolean = false;
     cols: any[] = [];
     rowsPerPageOptions = [10, 20, 50];
-    dateFormat = config['date-format'] || 'DD.MM.YYYY';
     subscription: Subscription;
     constructor(
         private messageService: MessageService,
@@ -80,127 +78,128 @@ export class UserListComponent implements OnInit {
     ) {}
 
     ngOnInit() {
-        this.store.dispatch(new GetUsers());
-        this.store.select(UserState.getUsers).subscribe((users) => {
-            this.users = [...users];
-        });
+        console.log('### dispatch GetInstitutions');
+        this.store.dispatch(new GetInstitutions());
+        this.store
+            .select(InstitutionState.getInstitutions)
+            .subscribe((institutions) => {
+                if (institutions && institutions.length > 0) {
+                    this.institutions = [...institutions];
+                } else {
+                    this.institutions = [];
+                }
+            });
 
         this.cols = [
-            { field: 'userName', header: 'User' },
-            { field: 'email', header: 'Email' },
-            { field: 'firstName', header: 'First-Name' },
-            { field: 'lastName', header: 'Last-Name' },
-            { field: 'gender', header: 'Gender' },
-            { field: 'dateOfBirth', header: 'Date of birth' },
+            { field: 'name', header: 'Name' },
+            { field: 'image', header: 'Image' },
         ];
     }
 
     openNew() {
-        this.user = {};
-        this.router.navigate(['/users/new']);
+        this.institution = { name: '' };
+        this.router.navigate(['/institutions/new']);
     }
 
-    deleteSelectedUsers() {
-        this.deleteUsersDialog = true;
+    deleteSelectedInstitutions() {
+        this.deleteInstitutionsDialog = true;
     }
 
-    editUser(user: User) {
-        this.user = { ...user };
-        this.store.dispatch(new UpdateSelectedUser(user));
-        // this.userDialog = true;
-        this.router.navigate(['/users', user.id]);
+    editInstitution(institution: Institution) {
+        this.institution = { ...institution };
+        this.router.navigate(['/institutions', institution.id]);
     }
 
-    deleteUser(user: User) {
-        this.deleteUserDialog = true;
-        this.user = { ...user };
+    deleteInstitution(institution: Institution) {
+        this.deleteInstitutionDialog = true;
+        this.institution = { ...institution };
     }
 
     confirmDeleteSelected() {
-        this.deleteUsersDialog = false;
+        this.deleteInstitutionsDialog = false;
         this.messageService.add({
             severity: 'success',
             summary: 'Successful',
-            detail: 'Users Deleted',
+            detail: 'Institutions Deleted',
             life: 3000,
         });
-        this.selectedUsers = [];
+        this.selectedInstitutions = [];
     }
 
     confirmDelete() {
-        this.deleteUserDialog = false;
-        if (this.user.id) {
-            this.store.dispatch(new DeleteUser(this.user.id));
+        this.deleteInstitutionDialog = false;
+        if (this.institution.id) {
+            this.store.dispatch(new DeleteInstitution(this.institution.id));
             this.messageService.add({
                 severity: 'success',
                 summary: 'Successful',
-                detail: 'User Deleted',
+                detail: 'Institution Deleted',
                 life: 3000,
             });
-            this.user = {};
+            this.institution = { name: '' };
         }
     }
 
     hideDialog() {
-        this.userDialog = false;
+        this.institutionDialog = false;
         this.submitted = false;
     }
 
-    saveUser() {
+    saveInstitution() {
         this.submitted = true;
-        if (this.user) {
+        if (this.institution) {
             this.store
-                .dispatch(new UpdateUser(this.user))
-                .subscribe((userUpdated) => {
+                .dispatch(new UpdateInstitution(this.institution))
+                .subscribe((institutionUpdated) => {
                     this.messageService.add({
                         severity: 'success',
                         summary: 'Successful',
-                        detail: `User '${userUpdated.userName}' Updated`,
+                        detail: `Institution '${institutionUpdated.institutionName}' Updated`,
                         life: 3000,
                     });
-                    this.userDialog = false;
+                    this.institutionDialog = false;
                 });
         }
-        // if (this.user.userName?.trim()) {
-        //     if (this.user.id) {
-        //         this.users[this.findIndexById(this.user.id)] = this.user;
-        //         this.userService
-        //             .updateUser(this.user)
-        //             .subscribe((updatedUser) => {
-        //                 if (updatedUser) {
-        //                     this.user = updatedUser;
-        //                     this.users[this.findIndexById(this.user.id || '')] =
-        //                         this.user;
+        // if (this.institution.institutionName?.trim()) {
+        //     if (this.institution.id) {
+        //         this.institutions[this.findIndexById(this.institution.id)] = this.institution;
+        //         this.institutionService
+        //             .updateInstitution(this.institution)
+        //             .subscribe((updatedInstitution) => {
+        //                 if (updatedInstitution) {
+        //                     this.institution = updatedInstitution;
+        //                     this.institutions[this.findIndexById(this.institution.id || '')] =
+        //                         this.institution;
         //                     this.messageService.add({
         //                         severity: 'success',
         //                         summary: 'Successful',
-        //                         detail: 'User Updated',
+        //                         detail: 'Institution Updated',
         //                         life: 3000,
         //                     });
         //                 }
         //             });
         //     } else {
-        //         this.user.id = this.createId();
-        //         this.user.image = 'user-placeholder.svg';
-        //         this.users.push(this.user);
+        //         this.institution.id = this.createId();
+        //         this.institution.image = 'institution-placeholder.svg';
+        //         this.institutions.push(this.institution);
         //         this.messageService.add({
         //             severity: 'success',
         //             summary: 'Successful',
-        //             detail: 'User Created',
+        //             detail: 'Institution Created',
         //             life: 3000,
         //         });
         //     }
 
-        //     this.users = [...this.users];
-        //     this.userDialog = false;
-        //     this.user = {};
+        //     this.institutions = [...this.institutions];
+        //     this.institutionDialog = false;
+        //     this.institution = {};
         // }
     }
 
     findIndexById(id: string): number {
         let index = -1;
-        // for (let i = 0; i < this.users.length; i++) {
-        //     if (this.users[i].id === id) {
+        // for (let i = 0; i < this.institutions.length; i++) {
+        //     if (this.institutions[i].id === id) {
         //         index = i;
         //         break;
         //     }

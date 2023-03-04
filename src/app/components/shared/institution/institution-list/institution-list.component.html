@@ -1,0 +1,218 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card px-6 py-6">
+            <p-toast></p-toast>
+            <p-toolbar styleClass="mb-4">
+                <ng-template pTemplate="left">
+                    <div class="my-2">
+                        <button
+                            pButton
+                            pRipple
+                            label="{{ 'button.add' | translate }}"
+                            icon="pi pi-plus"
+                            class="p-button-sm p-button-success mr-2"
+                            (click)="openNew()"
+                        ></button>
+                        <button
+                            pButton
+                            pRipple
+                            label="{{ 'button.delete' | translate }}"
+                            icon="pi pi-trash"
+                            class="p-button-sm p-button-danger"
+                            (click)="deleteSelectedInstitutions()"
+                            [disabled]="
+                                !selectedInstitutions ||
+                                !selectedInstitutions.length
+                            "
+                        ></button>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="right">
+                    <button
+                        pButton
+                        pRipple
+                        label="{{ 'button.export' | translate }}"
+                        icon="pi pi-upload"
+                        class="p-button-sm p-button-help"
+                        (click)="dt.exportCSV()"
+                    ></button>
+                </ng-template>
+            </p-toolbar>
+
+            <p-table
+                #dt
+                [value]="institutions"
+                [columns]="cols"
+                responsiveLayout="scroll"
+                [rows]="10"
+                [globalFilterFields]="['name']"
+                [rows]="10"
+                [paginator]="true"
+                [rowsPerPageOptions]="[10, 20, 30]"
+                [showCurrentPageReport]="true"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} entries"
+                [(selection)]="selectedInstitutions"
+                selectionMode="multiple"
+                sortMode="multiple"
+                [rowHover]="true"
+                dataKey="id"
+            >
+                <ng-template pTemplate="caption">
+                    <div
+                        class="flex flex-column md:flex-row md:justify-content-between md:align-items-center"
+                    >
+                        <h5 class="m-0">
+                            {{
+                                "general.institutions" | translate
+                            }}
+                        </h5>
+                        <span class="block mt-2 md:mt-0 p-input-icon-left">
+                            <i class="pi pi-search"></i>
+                            <input
+                                pInputText
+                                type="text"
+                                (input)="onGlobalFilter(dt, $event)"
+                                placeholder="Search..."
+                                class="w-full sm:w-auto"
+                            />
+                        </span>
+                    </div>
+                </ng-template>
+                <ng-template pTemplate="header">
+                    <tr>
+                        <th style="width: 3rem">
+                            <p-tableHeaderCheckbox></p-tableHeaderCheckbox>
+                        </th>
+                        <th pSortableColumn="name">
+                            {{ "institution.name" | translate }}
+                            <p-sortIcon field="name"></p-sortIcon>
+                        </th>
+                        <th pSortableColumn="image" style="text-align: center">
+                            {{ "institution.image" | translate }}
+                        </th>
+                        <th></th>
+                    </tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-institution>
+                    <tr>
+                        <td>
+                            <p-tableCheckbox
+                                [value]="institution"
+                            ></p-tableCheckbox>
+                        </td>
+                        <td style="width: 50%; min-width: 10rem">
+                            <span class="p-column-title">{{ "institution.name" | translate }}</span>
+                            {{ institution.name || institution.id }}
+                        </td>
+                        <td
+                            style="
+                                width: 10%;
+                                min-width: 5rem;
+                                text-align: center;
+                            "
+                        >
+                            <span class="p-column-title">{{ "institution.image" | translate }}</span>
+                            <p-avatar
+                                image="{{ institution.image }}"
+                                shape="circle"
+                                size="large"
+                            ></p-avatar>
+                            <!-- <img [src]="'assets/images/institution/default_institution.png'" [alt]="institution.institutionName" width="100" class="shadow-4" /> -->
+                        </td>
+                        <td>
+                            <div class="flex justify-content-center">
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-sm p-button-success mr-2"
+                                    (click)="editInstitution(institution)"
+                                ></button>
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-trash"
+                                    class="p-button-rounded p-button-sm p-button-warning"
+                                    (click)="deleteInstitution(institution)"
+                                ></button>
+                            </div>
+                        </td>
+                    </tr>
+                </ng-template>
+            </p-table>
+        </div>
+
+        <p-dialog
+            [(visible)]="deleteInstitutionDialog"
+            header="Confirm"
+            [modal]="true"
+            [style]="{ width: '450px' }"
+        >
+            <div class="flex align-items-center justify-content-center">
+                <i
+                    class="pi pi-exclamation-triangle mr-3"
+                    style="font-size: 2rem"
+                ></i>
+                <span *ngIf="institution"
+                    >Are you sure you want to delete
+                    <b>{{ institution.name }}</b
+                    >?</span
+                >
+            </div>
+            <ng-template pTemplate="footer">
+                <button
+                    pButton
+                    pRipple
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    label="No"
+                    (click)="deleteInstitutionDialog = false"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    label="Yes"
+                    (click)="confirmDelete()"
+                ></button>
+            </ng-template>
+        </p-dialog>
+
+        <p-dialog
+            [(visible)]="deleteInstitutionsDialog"
+            header="Confirm"
+            [modal]="true"
+            [style]="{ width: '450px' }"
+        >
+            <div class="flex align-items-center justify-content-center">
+                <i
+                    class="pi pi-exclamation-triangle mr-3"
+                    style="font-size: 2rem"
+                ></i>
+                <span
+                    >Are you sure you want to delete selected
+                    institutions?</span
+                >
+            </div>
+            <ng-template pTemplate="footer">
+                <button
+                    pButton
+                    pRipple
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    label="No"
+                    (click)="deleteInstitutionsDialog = false"
+                ></button>
+                <button
+                    pButton
+                    pRipple
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    label="Yes"
+                    (click)="confirmDeleteSelected()"
+                ></button>
+            </ng-template>
+        </p-dialog>
+    </div>
+</div>

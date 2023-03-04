@@ -19,6 +19,7 @@ import {
 import { User } from '../../api/user';
 import { Injectable } from '@angular/core';
 import { JWTTokenService } from 'src/app/service/jwt-token.service';
+import { stat } from 'fs';
 
 export class UserStateModel {
     users: User[] = [];
@@ -64,7 +65,7 @@ export class UserState {
     }
 
     @Selector()
-    static getUser2(state: UserStateModel) {
+    static getUser(state: UserStateModel) {
         return (id: string) => {
             return state.users.find((user) => user.id === id);
         };
@@ -101,15 +102,18 @@ export class UserState {
     @Action(GetUser)
     getUserById(
         { getState, setState }: StateContext<UserStateModel>,
-        id: string
+        payload: any
     ) {
-        return this.userService.getUsers().pipe(
-            tap((users) => {
+        return this.userService.getUserById(payload.id).pipe(
+            tap((userResult) => {
+                const user = userResult.data;
                 const state = getState();
-                const userFound = users.find((user) => user.id === id);
+                const users: User[] = JSON.parse(JSON.stringify(state.users));
+                const foundIndex = users.findIndex((u) => u.id === user.id);
+                users[foundIndex] = user;
                 setState({
                     ...state,
-                    user: userFound,
+                    users: users,
                 });
             })
         );
@@ -124,11 +128,33 @@ export class UserState {
             tap((result) => {
                 const state = getState();
                 const userList = [...state.users];
-                const todoIndex = userList.findIndex(
+                const userIndex = userList.findIndex(
                     (item) => item.id === user.id
                 );
                 console.log('###result', result);
-                userList[todoIndex] = result.data;
+                userList[userIndex] = result.data;
+                setState({
+                    ...state,
+                    users: userList,
+                });
+            })
+        );
+    }
+
+    @Action(AddUser)
+    adddUser(
+        { getState, setState }: StateContext<UserStateModel>,
+        { user }: AddUser
+    ) {
+        return this.userService.updateUser(user).pipe(
+            tap((result) => {
+                const state = getState();
+                const userList = [...state.users];
+                const userIndex = userList.findIndex(
+                    (item) => item.id === user.id
+                );
+                console.log('###result', result);
+                userList[userIndex] = result.data;
                 setState({
                     ...state,
                     users: userList,

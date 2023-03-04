@@ -1,4 +1,3 @@
-import { Action } from '@ngxs/store';
 import { User } from '../../api/user';
 
 //Update
@@ -30,7 +29,7 @@ export class GetCurrentUser {
 //Create
 export class AddUser {
     static readonly type = '[User] Add';
-    constructor(public payload: any) {}
+    constructor(public user: User) {}
 }
 
 //Delete

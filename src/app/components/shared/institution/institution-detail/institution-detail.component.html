@@ -1,0 +1,59 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <h5 *ngIf="institution && institution.id">Institution update</h5>
+            <h5 *ngIf="!institution || !institution.id">Institution create</h5>
+            <hr />
+            <div *ngIf="institution" class="p-fluid p-formgrid grid justify-content-between">
+                <div
+                    class="col-12 md:col-6 flex p-formgrid grid justify-content-center align-items-center"
+                >
+                    <app-image-upload
+                        [imageBase64]="institution?.image"
+                        (imageBase64Output)="institutionImageChanged($event)"
+                    ></app-image-upload>
+                </div>
+                <div class="col-12 md:col-6">
+                    <div class="field">
+                        <label for="name">{{
+                            "institution.name" | translate
+                        }}</label>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-institution"></i>
+                            <input
+                                type="text"
+                                pInputText
+                                id="name"
+                                [(ngModel)]="institution.name"
+                                placeholder="Institution name"
+                                required
+                                [ngClass]="{
+                                    'ng-invalid ng-dirty':
+                                        submitted && !institution.name
+                                }"
+                            />
+                        </span>
+                    </div>
+                </div>
+                <div class="col-12 footer-buttons">
+                    <button
+                        pButton
+                        pRipple
+                        label="Save"
+                        icon="pi pi-check"
+                        class="p-button"
+                        (click)="saveInstitution()"
+                    ></button>
+                    <button
+                        pButton
+                        pRipple
+                        label="Cancel"
+                        icon="pi pi-times"
+                        class="p-button-secondary"
+                        (click)="cancel()"
+                    ></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

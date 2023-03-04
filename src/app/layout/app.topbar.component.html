@@ -34,5 +34,13 @@
             <i class="pi pi-fw pi-power-off"></i>
             <span>Logout</span>
         </button>
+            <p-menubar [model]="items">
+                <ng-template pTemplate="end">
+                    <span class="p-input-icon-right">
+                        <input type="text" pInputText placeholder="Search">
+                        <i class="pi pi-search"></i>
+                    </span>
+                </ng-template>
+            </p-menubar>
     </div>
 </div>

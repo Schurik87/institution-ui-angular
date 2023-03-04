@@ -23,12 +23,12 @@
         "last-name": "Nachname",
         "gender": "Geschlecht",
         "image": "Image",
-        "date-of-birth": "Date of birth",
+        "date-of-birth": "Geburtsdatum",
         "appLanguage": "App Sprache",
         "genders": {
-            "male": "Male",
-            "female": "Female",
-            "other": "Other"
+            "male": "Männlich",
+            "female": "Weiblich",
+            "other": "Sonstiges"
         }
     }
 }

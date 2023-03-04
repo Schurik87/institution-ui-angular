@@ -25,10 +25,7 @@ export class AuthService {
     login(userLogin: UserLogin) {
         return this.http
             .post<loginResult>(`${this.apiUrl}/users/login`, userLogin)
-            .pipe(
-                tap((result) => this.setSession(result.token)),
-                catchError(ServiceError.handleError)
-            );
+            .pipe(tap((result) => this.setSession(result.token)));
     }
 
     private setSession(token: string) {

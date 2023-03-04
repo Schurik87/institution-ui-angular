@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { Select, Selector, Store } from '@ngxs/store';
+import { MessageService } from 'primeng/api';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { LayoutService } from 'src/app/layout/service/app.layout.service';
 import { AuthService } from 'src/app/service/auth.service';
@@ -25,6 +26,7 @@ import { AuthModule } from '../auth.module';
     ],
 })
 export class LoginComponent {
+    private readonly destroy$ = new Subject();
     unsubscribe$: Subject<boolean> = new Subject<boolean>();
     valCheck: string[] = ['remember'];
 
@@ -33,10 +35,9 @@ export class LoginComponent {
 
     constructor(
         public layoutService: LayoutService,
-        private store: Store,
         private router: Router,
         private authService: AuthService,
-        private jwtService: JWTTokenService,
+        private messageService: MessageService,
         private languageService: LanguageService,
         private userService: UserService
     ) {
@@ -57,9 +58,9 @@ export class LoginComponent {
                     // set app language for user
                     this.userService
                         .getUserByUserName(this.userName)
+                        .pipe(takeUntil(this.destroy$))
                         .subscribe((userResult) => {
                             const user = userResult.data;
-                            console.log('### user', userResult);
                             if (userResult && userResult.data.appLanguage) {
                                 this.languageService.changeLang(
                                     userResult.data.appLanguage
@@ -68,10 +69,22 @@ export class LoginComponent {
                                 // When no language defined, set a default one.
                                 this.languageService.setDefaultLanguage();
                             }
+                            this.messageService.add({
+                                severity: 'success',
+                                summary: 'Welcome',
+                                detail: `Hello ${user.userName}!`,
+                                life: 3000,
+                            });
                         });
                     this.router.navigate(['/']);
+                } else {
+                    this.messageService.add({
+                        severity: 'warn',
+                        summary: 'Login failed',
+                        detail: `Hello ${loginResult}!`,
+                        life: 3000,
+                    });
                 }
-                console.log('#### login result after login', loginResult);
             });
     }
 }

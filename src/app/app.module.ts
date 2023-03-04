@@ -31,6 +31,9 @@ import { LocalStorageService } from './service/local-storage.sevice';
 import { TranslateHttpLoader } from '@ngx-translate/http-loader';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { LanguageService } from './service/language.service';
+import { InstitutionState } from './store/states/institution.state';
+import { SectionState } from './store/states/section.state';
+import { Toast, ToastModule } from 'primeng/toast';
 
 // AoT requires an exported function for factories
 export function HttpLoaderFactory(httpClient: HttpClient) {
@@ -41,6 +44,7 @@ export const httpInterceptorProviders = [
         provide: HTTP_INTERCEPTORS,
         useClass: AuthInterceptor,
         multi: true,
+        deps: [MessageService],
     },
 ];
 
@@ -49,9 +53,12 @@ export const httpInterceptorProviders = [
     imports: [
         AppRoutingModule,
         AppLayoutModule,
-        NgxsModule.forRoot([AuthState, UserState], {
-            developmentMode: !environment.production,
-        }),
+        NgxsModule.forRoot(
+            [AuthState, UserState, InstitutionState, SectionState],
+            {
+                developmentMode: !environment.production,
+            }
+        ),
         NgxsReduxDevtoolsPluginModule.forRoot(),
         NgxsLoggerPluginModule.forRoot(),
         TranslateModule.forRoot({
@@ -61,6 +68,7 @@ export const httpInterceptorProviders = [
                 deps: [HttpClient],
             },
         }),
+        ToastModule
     ],
     providers: [
         { provide: LocationStrategy, useClass: HashLocationStrategy },

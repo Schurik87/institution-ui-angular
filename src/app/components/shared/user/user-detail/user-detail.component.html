@@ -3,12 +3,14 @@
         <div class="card">
             <h5>User Profile</h5>
             <hr />
-            <div class="p-fluid p-formgrid grid justify-content-between">
+            <div *ngIf="user" class="p-fluid p-formgrid grid justify-content-between">
                 <div
                     class="col-12 md:col-6 flex p-formgrid grid justify-content-center align-items-center"
                 >
-                <app-image-upload [imageBase64]="user.image" (imageBase64Output)="userImageChanged($event)"></app-image-upload>
-
+                    <app-image-upload
+                        [imageBase64]="user?.image"
+                        (imageBase64Output)="userImageChanged($event)"
+                    ></app-image-upload>
                 </div>
                 <div class="col-12 md:col-6">
                     <div class="field">
@@ -28,14 +30,14 @@
                                     'ng-invalid ng-dirty':
                                         submitted && !user.userName
                                 }"
-                                disabled
+                                [disabled]="user.id!!"
                             />
                         </span>
                     </div>
                     <div class="field">
                         <label for="email">{{
-                            "user.user-email" | translate
-                        }}</label>
+                            "user.email" | translate
+                     }}</label>
                         <span class="p-input-icon-right">
                             <i class="pi pi-at"></i>
                             <input
@@ -102,7 +104,7 @@
                 </div>
                 <div class="col-12">
                     <div class="formgrid grid">
-                        <div class="col-12 md:col-6">
+                        <div class="field col-12 md:col-6">
                             <label for="firstName">{{
                                 "user.first-name" | translate
                             }}</label>
@@ -143,7 +145,7 @@
                 <div class="col-12 md:col-6">
                     <div class="field">
                         <label class="mb-3">{{
-                            "user.user-gender" | translate
+                            "user.gender" | translate
                         }}</label>
                         <div class="formgrid grid">
                             <div class="field-radiobutton col-4">
