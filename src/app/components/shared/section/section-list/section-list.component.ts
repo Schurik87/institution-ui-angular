@@ -102,6 +102,10 @@ export class SectionListComponent implements OnInit {
     deleteSelectedSections() {
         this.deleteSectionsDialog = true;
     }
+    goToSectionMember(section: Section) {
+        this.section = { ...section };
+        this.router.navigate(['/sections', section.id, 'member']);
+    }
 
     editSection(section: Section) {
         this.section = { ...section };

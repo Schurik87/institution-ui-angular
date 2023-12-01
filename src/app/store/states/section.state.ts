@@ -12,13 +12,15 @@ import {
     DeleteSection,
     GetSection,
     GetSections,
+    GetSectionTree,
     UpdateSection,
 } from '../actions/section.action';
-import { Section } from '../../api/section';
+import { Section, SectionTree } from '../../api/section';
 import { Injectable } from '@angular/core';
 
 export class SectionStateModel {
     sections: Section[] = [];
+    sectionTrees: SectionTree[] = [];
     section?: Section;
 }
 
@@ -27,6 +29,7 @@ export class SectionStateModel {
     defaults: {
         sections: [],
         section: undefined,
+        sectionTrees: [],
     },
 })
 @Injectable()
@@ -36,6 +39,11 @@ export class SectionState {
     @Selector()
     static getSections(state: SectionStateModel) {
         return state.sections;
+    }
+
+    @Selector()
+    static getSectionTree(state: SectionStateModel) {
+        return state.sectionTrees;
     }
 
     @Selector()
@@ -78,6 +86,23 @@ export class SectionState {
                 setState({
                     ...state,
                     section: sectionFound,
+                });
+            })
+        );
+    }
+
+    @Action(GetSectionTree)
+    getSectionTreeByInstitution(
+        { getState, setState }: StateContext<SectionStateModel>,
+        payload: any
+    ) {
+        console.log('#### payload', payload);
+        return this.sectionService.getSectionTree(payload.institutionId).pipe(
+            tap((sectionTrees) => {
+                const state = getState();
+                setState({
+                    ...state,
+                    sectionTrees: sectionTrees,
                 });
             })
         );

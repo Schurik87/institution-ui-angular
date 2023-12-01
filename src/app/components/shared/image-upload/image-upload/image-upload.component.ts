@@ -22,6 +22,7 @@ export class ImageUploadComponent {
     constructor() {}
 
     @Input() imageBase64?: string;
+    @Input() allowEditImage: boolean = true;
     @Output() imageBase64Output = new EventEmitter<string>();
     @ViewChild('imageSelector') imageSelector: ElementRef;
 

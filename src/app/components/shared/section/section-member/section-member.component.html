@@ -1,0 +1,122 @@
+<div class="grid">
+    <div class="col-12">
+        <div class="card">
+            <h5 *ngIf="section && section.id">section update</h5>
+            <h5 *ngIf="!section || !section.id">section create</h5>
+            <hr />
+            <div
+                *ngIf="section"
+                class="p-fluid p-formgrid grid justify-content-between"
+            >
+                <div
+                    class="col-12 md:col-6 flex p-formgrid grid justify-content-center align-items-center"
+                >
+                    <app-image-upload
+                        [imageBase64]="section?.image"
+                        [allowEditImage]="false"
+                        (imageBase64Output)="sectionImageChanged($event)"
+                    ></app-image-upload>
+                </div>
+                <div class="col-12 md:col-6">
+                    <div class="field">
+                        <label for="name">{{
+                            "section.name" | translate
+                        }}</label>
+                        <span class="p-input-icon-right">
+                            <i class="pi pi-section"></i>
+                            <input
+                                type="text"
+                                pInputText
+                                id="name"
+                                [(ngModel)]="section.name"
+                                placeholder="section name"
+                                required
+                                [ngClass]="{
+                                    'ng-invalid ng-dirty':
+                                        submitted && !section.name
+                                }"
+                            />
+                        </span>
+                    </div>
+                    <div class="field">
+                        <label for="institution">{{
+                            "general.institution" | translate
+                        }}</label>
+                        <p-dropdown
+                            [options]="institutions"
+                            [(ngModel)]="selectedInstitution"
+                            placeholder="Select a Institution"
+                            optionLabel="name"
+                            [required]="true"
+                            [showClear]="true"
+                        ></p-dropdown>
+                    </div>
+                </div>
+                <div class="col-12">
+                    <h2>Employees</h2>
+                    <p-pickList [source]="sourceEmployees" [target]="targetEmployees" sourceHeader="Available" targetHeader="Selected" [dragdrop]="true"
+    [responsive]="true" [sourceStyle]="{'height':'30rem'}" [targetStyle]="{'height':'30rem'}" filterBy="name"
+    sourceFilterPlaceholder="Search by name" targetFilterPlaceholder="Search by name">
+    <ng-template let-user pTemplate="item">
+        <div class="user-item">
+            <div class="image-container">
+                    <img src="{{user.image}}" [alt]="user.name" class="user-image" />
+            </div>
+            <div class="user-list-detail">
+                <h5 class="mb-2">{{user.firstName}} {{user.lastName}}</h5>
+                <i class="pi pi-tag user-category-icon"></i>
+                <span class="user-category">Sections: {{user.firstName}}</span>
+            </div>
+            <div class="user-list-action">
+                <h6 class="mb-2">${{user.userName}}</h6>
+                <span [class]="'user-badge status-' + user.firstName.toLowerCase()">{{user.firstName}}</span>
+            </div>
+        </div>
+    </ng-template>
+</p-pickList>
+                </div>
+                <div class="col-12 md:col-6">
+                    <h2>Clients</h2>
+                                        <p-pickList [source]="sourceClients" [target]="targetClients" sourceHeader="Available" targetHeader="Selected" [dragdrop]="true"
+    [responsive]="true" [sourceStyle]="{'height':'30rem'}" [targetStyle]="{'height':'30rem'}" filterBy="name"
+    sourceFilterPlaceholder="Search by name" targetFilterPlaceholder="Search by name">
+    <ng-template let-user pTemplate="item">
+        <div class="user-item">
+            <div class="image-container">
+                    <img src="{{user.image}}" [alt]="user.name" class="user-image" />
+            </div>
+            <div class="user-list-detail">
+                <h5 class="mb-2">{{user.firstName}} {{user.lastName}}</h5>
+                <i class="pi pi-tag user-category-icon"></i>
+                <span class="user-category">Sections: {{user.firstName}}</span>
+            </div>
+            <div class="user-list-action">
+                <h6 class="mb-2">${{user.userName}}</h6>
+                <span [class]="'user-badge status-' + user.firstName.toLowerCase()">{{user.firstName}}</span>
+            </div>
+        </div>
+    </ng-template>
+</p-pickList>
+                </div>
+                <div class="col-12 footer-buttons">
+                    <button
+                        pButton
+                        pRipple
+                        label="Save"
+                        icon="pi pi-check"
+                        class="p-button"
+                        (click)="saveSection()"
+                    ></button>
+                    <button
+                        pButton
+                        pRipple
+                        label="Cancel"
+                        icon="pi pi-times"
+                        class="p-button-secondary"
+                        (click)="cancel()"
+                    ></button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

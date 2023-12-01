@@ -5,53 +5,114 @@
             <h5 *ngIf="!institution || !institution.id">Institution create</h5>
             <hr />
             <div *ngIf="institution" class="p-fluid p-formgrid grid justify-content-between">
-                <div
-                    class="col-12 md:col-6 flex p-formgrid grid justify-content-center align-items-center"
-                >
-                    <app-image-upload
-                        [imageBase64]="institution?.image"
-                        (imageBase64Output)="institutionImageChanged($event)"
-                    ></app-image-upload>
+                <div class="col-12 md:col-6 flex p-formgrid grid justify-content-center align-items-center">
+                    <app-image-upload [imageBase64]="institution.image"
+                        (imageBase64Output)="institutionImageChanged($event)"></app-image-upload>
                 </div>
                 <div class="col-12 md:col-6">
                     <div class="field">
                         <label for="name">{{
                             "institution.name" | translate
-                        }}</label>
+                            }}</label>
                         <span class="p-input-icon-right">
                             <i class="pi pi-institution"></i>
-                            <input
-                                type="text"
-                                pInputText
-                                id="name"
-                                [(ngModel)]="institution.name"
-                                placeholder="Institution name"
-                                required
+                            <input type="text" pInputText id="name" [(ngModel)]="institution.name" placeholder="Institution name" required
                                 [ngClass]="{
                                     'ng-invalid ng-dirty':
                                         submitted && !institution.name
-                                }"
-                            />
+                                }" />
                         </span>
                     </div>
                 </div>
+                <div class="col-12 md:col-6">
+                    <p>Organization with advanced customization.</p>
+                    <p-organizationChart [value]="data1" selectionMode="single" [(selection)]="selectedNode"
+                        (onNodeSelect)="onNodeSelect($event)" styleClass="company">
+                        <ng-template let-node pTemplate="person">
+                            <div class="node-header">{{ node.label }}</div>
+                            <div class="node-content">
+                                <img src="https://primefaces.org/cdn/primeng/images/demo/organization/{node.data.avatar}" width="32" />
+                                <div>{{ node.data.name || '---' }}</div>
+                                <button pButton pRipple type="button" icon="pi pi-plus" class="p-button-rounded"></button>
+                                <button pButton pRipple type="button" icon="pi pi-minus"
+                                    class="p-button-rounded p-button-warning"></button>
+                                <button pButton pRipple type="button" icon="pi pi-users"
+                                    class="p-button-rounded p-button-warning"></button>
+                            </div>
+                        </ng-template>
+                        <ng-template let-node pTemplate="department">
+                            {{ node.label }}
+                        </ng-template>
+                    </p-organizationChart>
+                
+                    <h5>Basic</h5>
+                    <p>Hierarchical data with zero configuration.</p>
+                    <p-organizationChart [value]="data2"></p-organizationChart>
+                </div>
+                <div class="col-12">
+                    <p-treeTable [value]="files" [columns]="cols">
+                        <ng-template pTemplate="caption">
+                            FileSystem
+                        </ng-template>
+                        <ng-template pTemplate="header" let-columns>
+                            <tr>
+                                <th *ngFor="let col of columns">
+                                    {{col.header}}
+                                </th>
+                                <th style="width: 10rem">
+                                    <p-button icon="pi pi-cog"></p-button>
+                                </th>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="body" let-rowNode let-rowData="rowData" let-columns="columns">
+                            <tr>
+                                <td *ngFor="let col of columns; let i = index">
+                                    <p-treeTableToggler [rowNode]="rowNode" *ngIf="i === 0"></p-treeTableToggler>
+                                    {{rowData[col.field]}}
+                
+                                </td>
+                                <td>
+                                    <p-button icon="pi pi-search" styleClass="p-button-success"
+                                        [style]="{'margin-right': '.5em'}"></p-button>
+                                    <p-button icon="pi pi-pencil" styleClass="p-button-warning"></p-button>
+                                </td>
+                            </tr>
+                        </ng-template>
+                        <ng-template pTemplate="summary">
+                            <div style="text-align:left">
+                                <p-button icon="pi pi-refresh"></p-button>
+                            </div>
+                        </ng-template>
+                    </p-treeTable>
+                </div>
+                <div class="col-12">
+                    <p-tree [value]="data1" layout="horizontal" selectionMode="single" [(selection)]="selectedFile">
+                        <ng-template let-node pTemplate="url">
+                            <a [href]="node.data">{{node.label}}</a>
+                        </ng-template>
+                        <ng-template let-node pTemplate="default" class="flex justify-content-center align-items-center">
+                            <div>{{node.label}}</div>
+                            <div>{{node.data?.name}}</div>
+                            <button pButton pRipple type="button" icon="pi pi-plus" (click)="addSection(node)"
+                                class="p-button-rounded p-button-danger p-button-text"></button>
+                        </ng-template>
+                        <ng-template pTemplate="header">
+                            Header Content
+                        </ng-template>
+                        <ng-template pTemplate="empty">
+                            No records found
+                        </ng-template>
+                        <ng-template pTemplate="footer">
+                            Footer Content
+                        </ng-template>
+                        <ng-template let-node pTemplate="data">
+                            <a [href]="node.data">{{node.name}}</a>
+                        </ng-template>
+                    </p-tree>
+                </div>
                 <div class="col-12 footer-buttons">
-                    <button
-                        pButton
-                        pRipple
-                        label="Save"
-                        icon="pi pi-check"
-                        class="p-button"
-                        (click)="saveInstitution()"
-                    ></button>
-                    <button
-                        pButton
-                        pRipple
-                        label="Cancel"
-                        icon="pi pi-times"
-                        class="p-button-secondary"
-                        (click)="cancel()"
-                    ></button>
+                    <button pButton pRipple label="Save" icon="pi pi-check" class="p-button" (click)="saveInstitution()"></button>
+                    <button pButton pRipple label="Cancel" icon="pi pi-times" class="p-button-secondary" (click)="cancel()"></button>
                 </div>
             </div>
         </div>

@@ -11,6 +11,11 @@ export class GetSections {
     static readonly type = '[Sections] Fetch';
 }
 
+export class GetSectionTree {
+    static readonly type = '[Section Tree] Fetch';
+    constructor(public institutionId: string) {}
+}
+
 export class GetSection {
     static readonly type = '[Section] Get section';
     constructor(public id: string) {}

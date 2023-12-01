@@ -43,15 +43,22 @@ import { RouterModule } from '@angular/router';
                 path: 'sections',
                 loadComponent: () =>
                     import(
-                        './shared/institution copy/section-list/section-list.component'
+                        './shared/section/section-list/section-list.component'
                     ).then((m) => m.SectionListComponent),
             },
             {
                 path: 'sections/:id',
                 loadComponent: () =>
                     import(
-                        './shared/institution copy/section-detail/section-detail.component'
+                        './shared/section/section-detail/section-detail.component'
                     ).then((m) => m.SectionDetailComponent),
+            },
+            {
+                path: 'sections/:id/member',
+                loadComponent: () =>
+                    import(
+                        './shared/section/section-member/section-member.component'
+                    ).then((m) => m.SectionMemberComponent),
             },
             {
                 path: 'uikit',

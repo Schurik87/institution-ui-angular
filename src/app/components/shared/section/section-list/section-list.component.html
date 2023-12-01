@@ -133,16 +133,17 @@
                             <span class="p-column-title">{{
                                 "section.image" | translate
                             }}</span>
-                            <div *ngIf="section.institution"
-                                class="flex justify-content-center align-items-center"
+                            <div
+                                *ngIf="section.institution"
+                                class="flex justify-content-flex-start align-items-center"
                             >
-                            <div *ngIf="section.institution?.image">
-                                <p-avatar
-                                    image="{{ section.institution.image }}"
-                                    shape="circle"
-                                    size="large"
-                                ></p-avatar>
-                            </div>
+                                <div *ngIf="section.institution?.image">
+                                    <p-avatar
+                                        image="{{ section.institution.image }}"
+                                        shape="circle"
+                                        size="large"
+                                    ></p-avatar>
+                                </div>
                                 {{ section.institution.name }}
                             </div>
 
@@ -150,6 +151,13 @@
                         </td>
                         <td>
                             <div class="flex justify-content-center">
+                                <button
+                                    pButton
+                                    pRipple
+                                    icon="pi pi-sitemap"
+                                    class="p-button-rounded p-button-sm p-button-success mr-2"
+                                    (click)="goToSectionMember(section)"
+                                ></button>
                                 <button
                                     pButton
                                     pRipple

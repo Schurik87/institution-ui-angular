@@ -5,7 +5,7 @@ import {
 } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { catchError, Observable, throwError } from 'rxjs';
-import { UpdateSection, Section, SectionResult } from '../api/section';
+import { UpdateSection, Section, SectionResult, SectionTree } from '../api/section';
 
 @Injectable({
     providedIn: 'root',
@@ -18,6 +18,12 @@ export class SectionService {
     getSections() {
         console.log('##### getSections');
         return this.http.get<Section[]>(this.url);
+    }
+
+    getSectionTree(institutionId: string) {
+        return this.http.get<SectionTree[]>(
+            `${this.url}/tree/${institutionId}`
+        );
     }
 
     getSectionBySectionName(sectionName: string) {
